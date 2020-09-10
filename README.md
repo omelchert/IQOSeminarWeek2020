@@ -18,19 +18,18 @@ The short course aimed at reproducing the two figures contained in the research 
 
 pointing out various rules and best practices.
 
-
-### Results of the reproduction task
+## Results of the reproduction task
 
 The result of the full reproduction task, i.e. figure accompanied by a suitable caption, is shown below.
 
-![](https://github.com/omelchert/optfrog/blob/master/examples/FIGS/fig_optFrog_ESM_alpha0.0000.png)
+![](https://github.com/omelchert/IQOSeminarWeek2020/blob/master/fig01.png)
 *Fig. 1: Temporal development of the real-vauled field u(x,t) at times t=0 (short
 dashed line; labeled A), t=tB (dashed line; labeled B), and t=3.6 tB (solid
 line; labeled C).  Numbers 1 through 8 enumerate the solitons exhibited by
 u(x,t=3.6 tB) in order of decreasing amplitude. Dash-dotted lines are included
 to demonstrate the linear variation of their amplitudes.*
 
-![](https://github.com/omelchert/optfrog/blob/master/examples/FIGS/fig_optFrog_ESM_alpha0.0000.png)
+![](https://github.com/omelchert/IQOSeminarWeek2020/blob/master/fig02.png)
 *Fig. 2: (a) Evolution of the real-valued field u(x,t) in the range t/TR =
 0.1--0.6.  Numbers 1 through 9 enumerate the solitons featured for t/TR>0.1 in
 order of decreasing amplitude.  White dots trace the amplitude peak of soliton
@@ -38,7 +37,7 @@ no.~1. In the vincinity of multiple similar amplitude solitons crossing, the
 tracing procedure is notoriously inaccurate (see dashed circles).  (b) Temporal
 variation of the peak amplitude AS1(t) of soliton no.~1.*
 
-### Prerequisites
+## Prerequisites
 
 To work as intended, the provided scripts are expected to be run via Python3 in
 conjunction with
