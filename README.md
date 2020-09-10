@@ -14,9 +14,9 @@ The short course aimed at reproducing the two figures contained in the research 
     Interaction of "Solitons" in a Collisionless Plasma and the Recurrence of Initial States,
     N. J. Zabusky and M. D. Kruskal,
     Phys. Rev. Lett. 15, 240 (1965)
-    [DOI: https://doi.org/10.1103/PhysRevLett.15.240](https://doi.org/10.1103/PhysRevLett.15.240)
 
-pointing out various rules and best practices.
+
+[DOI: https://doi.org/10.1103/PhysRevLett.15.240](https://doi.org/10.1103/PhysRevLett.15.240) pointing out various rules and best practices.
 
 ## Results of the reproduction task
 
