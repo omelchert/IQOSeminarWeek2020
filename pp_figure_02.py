@@ -18,7 +18,6 @@ Date: 2020-09-09
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.colors as col
 from matplotlib.gridspec import GridSpec
 
 __author__ = 'Oliver Melchert'
@@ -124,31 +123,130 @@ def set_circle(ax, x0, y0, label):
 
 
 def set_colorbar(fig, img, ax):
-    """colorbar helper"""
+    """set colorbar
+
+    Function that generates a custom colorbar. For more options on
+    colorbars and tick parameters see Refs. [1,2]
+
+    Refs:
+      [1] https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.colorbar.html
+      [2] https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.tick_params.html
+
+    Args:
+      fig (object): main figure object
+      img (object): image that should be described
+      ax (object): axes object with position info for colorbar placement
+    """
     # -- extract position information for colorbar placement
     refPos = ax.get_position()
     x0, y0, w, h = refPos.x0, refPos.y0, refPos.width, refPos.height
-    colorbar_axis = fig.add_axes([x0, y0+1.015*h, w, 0.0175*h])
-    colorbar = fig.colorbar(img, cax=colorbar_axis, orientation='horizontal',extend='both')
-    colorbar.ax.tick_params(color='k',
-                        labelcolor='k',
-                        bottom=False,
-                        direction='out',
-                        labelbottom=False,
-                        labeltop=True,
-                        top=True,
-                        size=3,
-                        labelsize=8.,
-                        pad=0.
-                        )
+    # -- set new axes as reference for colorbar
+    colorbar_axis = fig.add_axes([x0, y0 + 1.015*h, w, 0.0175*h])
 
-    colorbar.set_ticks((-1, 0, 1))
-    colorbar.ax.set_title(r"Real-valued field $u(x,t)$", fontsize=8., y=2.5)
+    # -- set custom colorbar
+    colorbar = fig.colorbar(img,        # image described by colorbar
+            cax = colorbar_axis,        # reference axex
+            orientation = 'horizontal', # colorbar orientation
+            extend = 'both'             # ends with out-of range values
+            )
+    colorbar.ax.tick_params(
+            color = 'k',                # tick color 
+            labelcolor = 'k',           # label color
+            bottom = False,             # no ticks at bottom
+            labelbottom = False,        # no labels at bottom
+            labeltop = True,            # labels on top
+            top = True,                 # ticks on top
+            direction = 'out',          # place ticks outside
+            length = 3,                 # tick length in pts. 
+            labelsize = 8.,             # tick font in pts.
+            pad = 0.                    # tick-to-label distance in pts.
+            )
+    colorbar.set_ticks((-2, -1, 0, 1, 2))
+    colorbar.ax.set_title(r"Real-valued field $u(x,t)$",
+                            fontsize=8., y=2.5)
+
+
+def set_colorbar_small(fig, img, ax):
+    """set small colorbar
+
+    Function that generates a custom colorbar. For more options on
+    colorbars and tick parameters see Refs. [1,2]
+
+    Refs:
+      [1] https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.colorbar.html
+      [2] https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.tick_params.html
+
+    Args:
+      fig (object): main figure object
+      img (object): image that should be described
+      ax (object): axes object with position info for colorbar placement
+    """
+    # -- extract position information for colorbar placement
+    refPos = ax.get_position()
+    x0, y0, w, h = refPos.x0, refPos.y0, refPos.width, refPos.height
+    # -- set new axes as reference for colorbar
+    colorbar_axes = fig.add_axes([x0 + 0.875*w, y0 + 0.83*h, 0.03*w, 0.15*h])
+
+    # -- set custom colorbar
+    colorbar = fig.colorbar(img,        # image described by colorbar
+            cax = colorbar_axes,        # reference axex
+            orientation = 'vertical', # colorbar orientation
+            extend = 'both'             # ends with out-of range values
+            )
+    colorbar.ax.tick_params(
+            color = 'k',                # tick color 
+            labelcolor = 'k',           # label color
+            right=False,                # no right ticks
+            labelright=False,           # no right labels
+            left=True,                  # ticks left
+            labelleft=True,             # labels left
+            direction = 'out',          # place ticks outside
+            length = 3,                 # tick length in pts. 
+            labelsize = 8.,             # tick font in pts.
+            pad = 0.                    # tick-to-label distance in pts.
+            )
+    colorbar.set_ticks((-2, -1, 0, 1, 2))
+    colorbar.ax.set_ylabel(r"Field $u(x,t)$", fontsize = 8.)
+
+    # -- enhance contrast by placeing patch under colorbar
+    import matplotlib.patches as mpatches
+    rectangle = mpatches.Rectangle(
+            (-3., -0.1),            # bottom left corner coords. 
+             6.65, 1.2,             # width, height 
+            facecolor = 'white',    # path color
+            edgecolor = 'none',     # disable frame
+            alpha = 0.7,            # set transparencty    
+            transform = colorbar_axes.transAxes # use axes coords.
+            )
+    ax.add_patch(rectangle)
+
+
+def save_figure(fig_format = None, fig_name = 'test'):
+    """ save figure
+
+    Function that saves figure or shows interactive plot
+
+    Note:
+    - if no valid option is provided, an interactive plot is shown
+
+    Args:
+      fig_format (str): format to save figure in (options: png, pdf, svg)
+      fig_name (str): name for figure (default: 'test')
+    """
+    if fig_format == 'png':
+        plt.savefig(fig_name+'.png', format='png', dpi=600)
+    elif fig_format == 'pdf':
+        plt.savefig(fig_name+'.pdf', format='pdf', dpi=600)
+    elif fig_format == 'svg':
+        plt.savefig(fig_name+'.svg', format='svg')
+    else:
+        plt.show()
+
 
 def generate_figure(x, t, uxt, fig_format=None, fig_name='fig02'):
     """generate figure
 
-    Function generating a figure reproducing FIG. 1 of [1].
+    Function generating a figure reproducing FIG. 2 of [1].
 
     Refs:
       [1] Interaction of "Solitons" in a Collisionless Plasma and the Recurrence of Initial States,
@@ -156,51 +254,62 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig02'):
           Phys. Rev. Lett. 15, 240 (1965)
 
     Args:
-      x (1D array): x-samples
-      ax (object): figure part for which the labeled circle is intended
-      x0 (float): x-position for center of circle
-      y0 (float): y-position for center of circle
-      label (str): text that should be displayed within circle
-
       x (1D array): x samples
       t (1D array): t samples
       uxt (2D array): wave profile u(x,t)
       fig_format (str): format for output figure
                         (choices: png, pdf, svg; default: interactive figure)
+      fig_name (str): name for output figure wihtout suffix (default='fig02')
     """
 
     # (1) SET A STYLE THAT FITS THE TARGET JOURNAL
     set_style()
 
-    # (2) SET FIGURE LAYOUR
+    # (2) SET FIGURE LAYOUT
     fig = plt.figure()
-    plt.subplots_adjust(left=0.17, bottom=0.065, right=0.96, top= 0.91, wspace=0.3, hspace=0.05)
-    gs00 = GridSpec(1,6)
-    ax01 = plt.subplot(gs00[0,0:5])
-    ax02 = plt.subplot(gs00[0,5])
+    plt.subplots_adjust(left = 0.17,    # pos. of subplots left border
+                        bottom = 0.065, # pos. of subplots bottom border 
+                        right = 0.96,   # pos. of subplots right border
+                        top = 0.91,     # pos. of subplots top border
+                        wspace = 0.3,   # horizontal space between supblots
+                        hspace = 0.05   # vertical space between subplots
+                        )
+    gs00 = GridSpec(nrows = 1, ncols = 6)   # set geometry of subplot grid
+    ax01 = fig.add_subplot(gs00[0, 0:5])
+    ax02 = fig.add_subplot(gs00[0, 5])
 
-    # (3.1) SUBPLOT 1 - SET FIGURE CONTENTS
+
+    # (3.1) SUBPLOT 1 - SET AXES CONTENTS
     tR = 30.4/np.pi
     t = t/tR
     img = ax01.pcolorfast(x, t, uxt[:-1,:-1],
-                          norm = col.Normalize(vmin = -1., vmax = 1.),
-                          cmap = mpl.cm.get_cmap('coolwarm')
+                          vmin=-2., vmax=2.,                    # set color range
+                          cmap = mpl.cm.get_cmap('coolwarm')    # set colormap
                           )
     set_colorbar(fig, img, ax01)
 
     # -- add auxiliary horizontal lines
     for t0 in [0.5,1./3,1./4,1./5,1./6]:
-        ax01.axhline(t0, color='black', dashes=[2,2], linewidth=1)
+        ax01.axhline(t0, color = 'black', dashes = [2,2], linewidth = 1)
 
+    # -- add dashed circles
+    ax01.scatter(0.45, 0.5,     # position in data coordinates 
+                s = 1400,       # symbol size in pts.-squared
+                fc = 'None',    # facecolor
+                ec = 'black',   # edgecolor
+                lw = 1,         # linewidth
+                ls = '--',      # linestyle
+                zorder = 100    # layering order
+                )
+    ax01.scatter(1.90, 0.4,  s=600,  lw=1, efc='None', c='black', ls='--', zorder=100)
+    ax01.scatter(1.67, 1./3, s=600,  lw=1, efc='None', c='black', ls='--', zorder=100)
+    ax01.scatter(1.23, 1./4, s=400,  lw=1, efc='None', c='black', ls='--', zorder=100)
+    ax01.scatter(0.98, 1./5, s=400,  lw=1, efc='None', c='black', ls='--', zorder=100)
+    ax01.scatter(0.83, 1./6, s=200,  lw=1, efc='None', c='black', ls='--', zorder=100)
+
+    # -- add numbered circles
     for idx, x0 in enumerate([0.59, 0.33, 0.1, 1.86, 1.64, 1.43, 1.23, 1.02, 0.82]):
       set_circle(ax01, x0, 0.11, r"$%d$"%(idx+1))
-
-    ax01.scatter(0.45, 0.5,  facecolors='None', s=1400, linewidth=1, edgecolors='black',linestyle='--', zorder=100)
-    ax01.scatter(1.90, 0.4,  facecolors='None', s=600,  linewidth=1, edgecolors='black',linestyle='--', zorder=100)
-    ax01.scatter(1.67, 1./3, facecolors='None', s=600,  linewidth=1, edgecolors='black',linestyle='--', zorder=100)
-    ax01.scatter(1.23, 1./4, facecolors='None', s=400,  linewidth=1, edgecolors='black',linestyle='--', zorder=100)
-    ax01.scatter(0.98, 1./5, facecolors='None', s=400,  linewidth=1, edgecolors='black',linestyle='--', zorder=100)
-    ax01.scatter(0.83, 1./6, facecolors='None', s=200,  linewidth=1, edgecolors='black',linestyle='--', zorder=100)
 
     # (4.1) SUBPLOT 1 - SET AXIS DETAILS
     # -- customize x-axis
@@ -225,7 +334,7 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig02'):
     ax01.set_ylabel(r"Normalized time $t$")
 
 
-    # (3.2) SUBPLOT 2 - SET FIGURE CONTENTS
+    # (3.2) SUBPLOT 2 - SET AXES CONTENTS
 
     # -- trace path of 1st soliton in subfigure 1
     x_idx = np.zeros(len(t), dtype=int)
@@ -267,24 +376,16 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig02'):
             rotation='vertical', transform=ax02.transAxes)
 
 
-    # -- add figure labels
+    # -- add subfigure labels
     ax01.text(-0.02, 1.01, r'(a)', fontsize=8,
             horizontalalignment='right', verticalalignment='bottom',
             transform=ax01.transAxes)
-
     ax02.text(0.0, 1.01, r'(b)', fontsize=8,
             horizontalalignment='left', verticalalignment='bottom',
             transform=ax02.transAxes)
 
     # (6) SAVE FIGURE
-    if fig_format == 'png':
-        plt.savefig(fig_name+'.png', format='png', dpi=600)
-    elif fig_format == 'pdf':
-        plt.savefig(fig_name+'.pdf', format='pdf', dpi=600)
-    elif fig_format == 'svg':
-        plt.savefig(fig_name+'.svg', format='svg')
-    else:
-        plt.show()
+    save_figure(fig_format, fig_name)
 
 
 def main():

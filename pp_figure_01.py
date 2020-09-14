@@ -122,25 +122,25 @@ def set_circle(ax, x0, y0, label):
     ax.text(x0, y0, label, backgroundcolor='none', ha='center', va='center', color='black', zorder=10, fontsize=6)
 
 
-def set_key(ax, lines):
-    """set key
+def set_legend(ax, lines):
+    """set legend
 
-    Function generating a custom key, see [1] for more options
+    Function generating a custom legend, see [1] for more options
 
     Refs:
       [1] https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.legend.html
 
     Args:
-      ax (object): figure part for which the key is intended
+      ax (object): figure part for which the legend is intended
       lines (list): list of  Line2D objects
     """
     # -- extract labels from lines
     labels = [x.get_label() for x in lines]
-    # -- customize key
+    # -- customize legend 
     ax.legend(lines,                # list of Line2D objects
               labels,               # labels 
-              title = '',           # title shown on top of key 
-              loc = 0,              # location of the key 
+              title = '',           # title shown on top of legend 
+              loc = 0,              # location of the legend
               ncol = 1,             # number of columns
               labelspacing = 0.3,   # vertical space between handles in font-size units
               borderpad = 0.3,      # distance to legend border in font-size units
@@ -159,7 +159,7 @@ def set_grid(ax):
       [1] https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.grid.html
 
     Args:
-      ax (object): figure part for which the key is intended
+      ax (object): figure part for which the grid is intended
     """
     #ax.set_facecolor('lightgray')
     ax.grid(which = 'major',        # grid lines at major ticks only
@@ -168,6 +168,28 @@ def set_grid(ax):
             color = 'lightgray',    # color of gridlines
             zorder = 0
             )
+
+
+def save_figure(fig_format = None, fig_name = 'test'):
+    """ save figure
+
+    Function that saves figure or shows interactive plot
+
+    Note:
+    - if no valid option is provided, an interactive plot is shown
+
+    Args:
+      fig_format (str): format to save figure in (options: png, pdf, svg)
+      fig_name (str): name for figure (default: 'test')
+    """
+    if fig_format == 'png':
+        plt.savefig(fig_name+'.png', format='png', dpi=600)
+    elif fig_format == 'pdf':
+        plt.savefig(fig_name+'.pdf', format='pdf', dpi=600)
+    elif fig_format == 'svg':
+        plt.savefig(fig_name+'.svg', format='svg')
+    else:
+        plt.show()
 
 
 def generate_figure(x, t, uxt, fig_format=None, fig_name='fig01'):
@@ -181,29 +203,29 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig01'):
           Phys. Rev. Lett. 15, 240 (1965)
 
     Args:
-      x (1D array): x-samples
-      ax (object): figure part for which the labeled circle is intended
-      x0 (float): x-position for center of circle
-      y0 (float): y-position for center of circle
-      label (str): text that should be displayed within circle
-
       x (1D array): x samples
       t (1D array): t samples
       uxt (2D array): wave profile u(x,t)
       fig_format (str): format for output figure
                         (choices: png, pdf, svg; default: interactive figure)
+      fig_name (str): name for output figure wihtout suffix (default='fig01')
     """
 
     # (1) SET A STYLE THAT FITS THE TARGET JOURNAL
     set_style()
 
-    # (2) SET FIGURE LAYOUR
+    # (2) SET FIGURE LAYOUT
     fig = plt.figure()
-    plt.subplots_adjust(left=0.12, bottom=0.16, right=0.97, top= 0.98)
-    gs00 = GridSpec(1,1)
-    ax01 = plt.subplot(gs00[:,:])
+    plt.subplots_adjust(left = 0.12,    # pos. of subplots left border
+                        bottom = 0.16,  # pos. of subplots bottom border 
+                        right = 0.97,   # pos. of subplots right border
+                        top = 0.98      # pos. of subplots top border
+                        )
+    gs00 = GridSpec(nrows = 1, ncols = 1)   # set geometry of subplot grid
+    ax01 = fig.add_subplot(gs00[:,:])       # add subplot
 
-    # (3) SET FIGURE CONTENTS
+
+    # (3) SET AXES CONTENTS
     # -- custom constants and local functions
     tB = 1./np.pi                                   # breakdown time
     _ux = lambda t0: uxt[np.argmin(np.abs(t-t0))]   # wave form for array index closest to t0 
@@ -214,17 +236,28 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig01'):
     l3 = ax01.plot(x, _ux(3.6*tB), color='black', zorder=102, label=r'$t=3.6\,t_{\mathrm{B}}$')
 
     # -- add legend 
-    set_key(ax01, l1 + l2 + l3)
+    set_legend(ax01, l1 + l2 + l3)
 
     # -- set data curve labels
-    ax01.text(1.27, -0.9, r'A', backgroundcolor='none', ha='left', va='bottom', color='blue',  zorder=10)
-    ax01.text(0.60, -0.9, r'B', backgroundcolor='none', ha='left', va='bottom', color='green', zorder=10)
-    ax01.text(1.75, -0.9, r'C', backgroundcolor='none', ha='left', va='bottom', color='black', zorder=10)
+    ax01.text(1.27, -0.9,               # x,y pos. in data coordinates  
+                r'A',                   # text label    
+                color='blue',           # text color
+                backgroundcolor='none', # backgroundcolor
+                ha='left',              # horizontal alignment
+                va='bottom',            # vertical alignment
+                zorder=10               # layering order in figure
+                )
+    ax01.text(0.60, -0.9, r'B', color='green', backgroundcolor='none',
+                    ha='left', va='bottom', zorder=10)
+    ax01.text(1.75, -0.9, r'C', color='black', backgroundcolor='none',
+                    ha='left', va='bottom', zorder=10)
 
     # -- set auxiliary dash-dotted lines
     _f = lambda x: -1.5+1.5*np.where(x>0.8, x, x+2.)
-    ax01.plot(x[x<0.75], _f(x[x<0.75]), color='black', dashes = [15,1,2,1,2,1], linewidth=0.75)
-    ax01.plot(x[x>0.80], _f(x[x>0.80]), color='black', dashes = [15,1,2,1,2,1], linewidth=0.75)
+    ax01.plot(x[x<0.75], _f(x[x<0.75]), color='black',
+                    dashes = [15,1,2,1,2,1], linewidth=0.75)
+    ax01.plot(x[x>0.80], _f(x[x>0.80]), color='black',
+                    dashes = [15,1,2,1,2,1], linewidth=0.75)
 
     # -- set circles with labels
     for  idx, x0 in enumerate([0.643, 0.362, 0.098, 0.920, 1.14, 1.37, 1.6, 1.845]):
@@ -235,12 +268,25 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig01'):
     x_lim = (0, 2)
     x_ticks = (0., 0.5, 1.0, 1.5, 2.0)
     # -- major ticks
-    ax01.tick_params(axis='x', direction='out', length=3.5, pad=2, top=False)
+    ax01.tick_params(
+        axis = 'x',         # axis for which to set ticks 
+        direction = 'out',  # place ticks outside
+        length = 3.5,       # tick length in pts.
+        pad = 2,            # tick to label distance in pts.
+        top=False           # no ticks on top spine
+        )
     ax01.set_xlim(x_lim)
     ax01.set_xticks(x_ticks)
     # -- minor ticks
-    ax01.tick_params(axis='x', which='minor', length=2.)
-    ax01.set_xticks(np.linspace(x_lim[0],x_lim[1], int((x_lim[1]-x_lim[0])/0.1), endpoint=False), minor=True)
+    ax01.tick_params(
+        axis = 'x',         # axis for which to set ticks
+        which = 'minor',    # address minor ticks
+        length = 2.         # tick length in pts.
+        )
+    ax01.set_xticks(
+        np.linspace(x_lim[0],x_lim[1], int((x_lim[1]-x_lim[0])/0.1), endpoint=False),
+        minor=True
+        )
     # -- label
     ax01.set_xlabel(r'Normalized distance $x$')
 
@@ -261,14 +307,7 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig01'):
     set_grid(ax01)
 
     # (6) SAVE FIGURE
-    if fig_format == 'png':
-        plt.savefig(fig_name+'.png', format='png', dpi=600)
-    elif fig_format == 'pdf':
-        plt.savefig(fig_name+'.pdf', format='pdf')
-    elif fig_format == 'svg':
-        plt.savefig(fig_name+'.svg', format='svg')
-    else:
-        plt.show()
+    save_figure(fig_format, fig_name)
 
 
 def main():
