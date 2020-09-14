@@ -301,11 +301,11 @@ def generate_figure(x, t, uxt, fig_format=None, fig_name='fig02'):
                 ls = '--',      # linestyle
                 zorder = 100    # layering order
                 )
-    ax01.scatter(1.90, 0.4,  s=600,  lw=1, efc='None', c='black', ls='--', zorder=100)
-    ax01.scatter(1.67, 1./3, s=600,  lw=1, efc='None', c='black', ls='--', zorder=100)
-    ax01.scatter(1.23, 1./4, s=400,  lw=1, efc='None', c='black', ls='--', zorder=100)
-    ax01.scatter(0.98, 1./5, s=400,  lw=1, efc='None', c='black', ls='--', zorder=100)
-    ax01.scatter(0.83, 1./6, s=200,  lw=1, efc='None', c='black', ls='--', zorder=100)
+    ax01.scatter(1.90, 0.4,  s=600,  lw=1, fc='None', ec='black', ls='--', zorder=100)
+    ax01.scatter(1.67, 1./3, s=600,  lw=1, fc='None', ec='black', ls='--', zorder=100)
+    ax01.scatter(1.23, 1./4, s=400,  lw=1, fc='None', ec='black', ls='--', zorder=100)
+    ax01.scatter(0.98, 1./5, s=400,  lw=1, fc='None', ec='black', ls='--', zorder=100)
+    ax01.scatter(0.83, 1./6, s=200,  lw=1, fc='None', ec='black', ls='--', zorder=100)
 
     # -- add numbered circles
     for idx, x0 in enumerate([0.59, 0.33, 0.1, 1.86, 1.64, 1.43, 1.23, 1.02, 0.82]):
